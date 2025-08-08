@@ -2,7 +2,7 @@ use crate::core::ast::AstNode;
 use crate::core::evaluator::Evaluator;
 use anyhow::{Context, Result};
 
-/// ASTノード → 実行可能なフィルタクロージャに変換する
+// Converts an AST node into an executable filter closure
 pub fn build_filter(
     ast: &AstNode,
     invert: bool,
@@ -10,7 +10,7 @@ pub fn build_filter(
     let evaluator = Evaluator::from_ast(ast);
 
     Ok(move |input: &[u8]| {
-        let text = std::str::from_utf8(input).with_context(|| "入力がUTF-8ではありません")?;
+        let text = std::str::from_utf8(input).with_context(|| "Input is not valid UTF-8")?;
         let matched = evaluator.evaluate(text);
         Ok(if invert { matched } else { !matched })
     })
@@ -30,10 +30,10 @@ mod tests {
         let ast = lit("ERROR");
         let filter = build_filter(&ast, false).expect("filter build failed");
 
-        // "ERROR" を含む → 除去対象（= true） → invert=false → falseを返す（出力しない）
+        // Contains "ERROR" → matched=true → invert=false → returns false (excluded)
         assert_eq!(filter(b"this is ERROR").unwrap(), false);
 
-        // 含まない → false → invert=false → true（出力する）
+        // Does not contain → matched=false → invert=false → returns true (included)
         assert_eq!(filter(b"all good").unwrap(), true);
     }
 
@@ -42,10 +42,10 @@ mod tests {
         let ast = lit("ERROR");
         let filter = build_filter(&ast, true).expect("filter build failed");
 
-        // "ERROR" を含む → matched=true → invert=true → 出力対象（true）
+        // Contains "ERROR" → matched=true → invert=true → returns true (included)
         assert_eq!(filter(b"this is ERROR").unwrap(), true);
 
-        // 含まない → matched=false → invert=true → 出力しない（false）
+        // Does not contain → matched=false → invert=true → returns false (excluded)
         assert_eq!(filter(b"all good").unwrap(), false);
     }
 

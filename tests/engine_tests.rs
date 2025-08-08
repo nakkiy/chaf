@@ -11,7 +11,7 @@ fn test_basic_output_logic() {
     let input = make_reader(&["foo", "bar", "baz"]);
     let mut output = Vec::new();
 
-    let filter = |line: &[u8]| Ok(!line.contains(&b'b')); // b を含まない → 出力
+    let filter = |line: &[u8]| Ok(!line.contains(&b'b')); // Output lines that do NOT contain 'b'
 
     run_filter(input, &mut output, filter, false).unwrap();
 
@@ -25,7 +25,7 @@ fn test_crlf_conversion() {
     let input = Box::new(BufReader::new(Cursor::new(crlf_input)));
     let mut output = Vec::new();
 
-    let filter = |_line: &[u8]| Ok(true); // 全行出力
+    let filter = |_line: &[u8]| Ok(true); // Output all lines
 
     run_filter(input, &mut output, filter, false).unwrap();
 
@@ -62,5 +62,5 @@ fn test_report_mode_no_output() {
 
     run_filter(input, &mut output, filter, true).unwrap();
 
-    assert_eq!(output.len(), 0); // --report のときは出力抑制
+    assert_eq!(output.len(), 0); // Output is suppressed when --report is enabled
 }

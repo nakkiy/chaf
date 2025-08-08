@@ -17,7 +17,7 @@ impl Evaluator {
         }
     }
 
-    /// ASTノードをEvaluator構造に変換
+    // Converts an AST node into an Evaluator structure
     pub fn from_ast(ast: &AstNode) -> Self {
         match ast {
             AstNode::AndNode(lhs, rhs) => {
