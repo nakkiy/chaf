@@ -12,7 +12,10 @@ pub fn parse_query(query: &str) -> Result<AstNode> {
 
     parser.consume_whitespace();
     if parser.peek().is_some() {
-        bail!("Syntax error: unexpected trailing tokens at pos={}", parser.pos);
+        bail!(
+            "Syntax error: unexpected trailing tokens at pos={}",
+            parser.pos
+        );
     }
 
     Ok(ast)
@@ -197,7 +200,6 @@ mod tests {
         let err = parse_query("foo & & bar").unwrap_err();
         assert!(err.to_string().contains("Empty pattern"));
     }
-
 
     fn literal(s: &str) -> AstNode {
         AstNode::Match(Pattern::Literal(s.to_string()))

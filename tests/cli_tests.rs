@@ -1,6 +1,6 @@
 use chaf::cli::CliOptions;
-use std::path::PathBuf;
 use clap::Parser;
+use std::path::PathBuf;
 
 #[test]
 fn test_parse_minimum_args() {
