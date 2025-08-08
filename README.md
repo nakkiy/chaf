@@ -151,8 +151,8 @@ no matter how small, we'd love to hear from you.
 This project is dual-licensed under:
 
 - [MIT License](LICENSE-MIT)  
-  https://opensource.org/licenses/MIT  
+  <https://opensource.org/licenses/MIT>  
 - [Apache License 2.0](LICENSE-APACHE)  
-  https://www.apache.org/licenses/LICENSE-2.0  
+  <https://www.apache.org/licenses/LICENSE-2.0>  
 
 Use whichever license suits your needs.
