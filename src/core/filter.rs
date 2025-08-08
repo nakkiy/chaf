@@ -59,7 +59,7 @@ mod tests {
         assert_eq!(f1(b"foo bar").unwrap(), false); // matched → invert=false → false
         assert_eq!(f1(b"foo only").unwrap(), true); // not matched → true
 
-        assert_eq!(f2(b"foo bar").unwrap(), true);  // matched → invert=true → true
+        assert_eq!(f2(b"foo bar").unwrap(), true); // matched → invert=true → true
         assert_eq!(f2(b"foo only").unwrap(), false); // not matched → invert=true → false
     }
 
@@ -70,11 +70,11 @@ mod tests {
         let f = build_filter(&ast, false).unwrap();
         let g = build_filter(&ast, true).unwrap();
 
-        assert_eq!(f(b"DEBUG").unwrap(), true);   // matched=false → ! → false → invert=false → true
-        assert_eq!(f(b"INFO").unwrap(), false);   // matched=true → invert=false → false
+        assert_eq!(f(b"DEBUG").unwrap(), true); // matched=false → ! → false → invert=false → true
+        assert_eq!(f(b"INFO").unwrap(), false); // matched=true → invert=false → false
 
-        assert_eq!(g(b"DEBUG").unwrap(), false);  // matched=false → ! → false → invert=true → false
-        assert_eq!(g(b"INFO").unwrap(), true);    // matched=true → invert=true → true
+        assert_eq!(g(b"DEBUG").unwrap(), false); // matched=false → ! → false → invert=true → false
+        assert_eq!(g(b"INFO").unwrap(), true); // matched=true → invert=true → true
     }
 
     #[test]

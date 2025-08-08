@@ -11,8 +11,7 @@ fn test_chaf_filters_output() {
     writeln!(file, "debug: internal trace").unwrap();
 
     let mut cmd = Command::cargo_bin("chaf").unwrap();
-    cmd.arg("debug | error")
-        .arg(file.path());
+    cmd.arg("debug | error").arg(file.path());
 
     cmd.assert()
         .success()
@@ -29,8 +28,7 @@ fn test_chaf_with_invert_flag() {
     writeln!(file, "debug").unwrap();
 
     let mut cmd = Command::cargo_bin("chaf").unwrap();
-    cmd.args(["-i", "debug"])
-        .arg(file.path());
+    cmd.args(["-i", "debug"]).arg(file.path());
 
     cmd.assert()
         .success()
@@ -47,8 +45,7 @@ fn test_chaf_with_report_flag() {
     writeln!(file, "ok").unwrap();
 
     let mut cmd = Command::cargo_bin("chaf").unwrap();
-    cmd.args(["-r", "warn"])
-        .arg(file.path());
+    cmd.args(["-r", "warn"]).arg(file.path());
 
     cmd.assert()
         .success()
