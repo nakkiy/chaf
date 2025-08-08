@@ -1,5 +1,5 @@
 use std::io::{BufRead, Write};
-use tracing::{debug, error, info};
+use tracing::{error, info, trace};
 
 // Processes a text stream by applying a per-line filter function and writing matching lines to the output.
 //   `reader` – The input source (e.g., a file or standard input).
@@ -45,7 +45,7 @@ pub fn run_filter(
                 } else {
                     skipped += 1;
                 }
-                debug!("Line {}: matched={} → output={}", total, matched, matched);
+                trace!("Line {}: matched={} → output={}", total, matched, matched);
             }
             Err(e) => {
                 error!("Filter error at line {}: {}", total, e);
