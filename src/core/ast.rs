@@ -1,3 +1,4 @@
+// Represents a node in the abstract syntax tree (AST) for the logical query DSL.
 #[derive(Debug, Clone)]
 pub enum AstNode {
     AndNode(Box<AstNode>, Box<AstNode>),
@@ -6,6 +7,7 @@ pub enum AstNode {
     Match(Pattern),
 }
 
+// Represents a leaf pattern in the query DSL.
 #[derive(Debug, Clone)]
 pub enum Pattern {
     Literal(String), // eg: "log"

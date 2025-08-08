@@ -52,7 +52,7 @@ fn test_chaf_with_report_flag() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::is_empty()) // 出力されない（--report指定時）
+        .stdout(predicate::str::is_empty()) // No output (when --report is specified)
         .stderr(predicate::str::contains("Processed lines: 3"))
         .stderr(predicate::str::contains("Excluded lines: 2"))
         .stderr(predicate::str::contains("Output lines: 1"));

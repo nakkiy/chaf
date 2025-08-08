@@ -1,4 +1,4 @@
-// 外部テスト用に engine や core を公開
+// Expose engine and core modules for external tests
 pub mod engine;
 pub mod core;
 pub mod cli;

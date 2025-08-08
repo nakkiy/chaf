@@ -1,12 +1,12 @@
-/// ログの初期化（開発ビルド限定）
-///
-/// - `RUST_LOG=debug` 等の環境変数でログレベルを制御可能
-/// - リリースビルドでは呼び出されても何も起きない（無効化）
+// Initializes logging for development builds only.
+//
+// - The logging level can be configured via the `RUST_LOG` environment variable (e.g., `RUST_LOG=debug`)
+// - Has no effect in release builds (no-op)
 #[cfg(debug_assertions)]
 pub fn init_logging() {
     use tracing_subscriber::fmt::Subscriber;
     use tracing_subscriber::EnvFilter;
-    // debug_assertions が true のとき（= devビルド）
+    // When debug_assertions is true (i.e., development build)
     {
         let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("debug"));
 
@@ -20,5 +20,5 @@ pub fn init_logging() {
 }
 #[cfg(not(debug_assertions))]
 pub fn init_logging() {
-    // リリースビルドでは何もしない（空定義）
+    // No-op in release builds
 }

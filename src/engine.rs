@@ -1,13 +1,14 @@
 use std::io::{BufRead, Write};
 use tracing::{debug, error, info};
 
-/// テキストストリームを読み取り、フィルタ関数で処理し、出力に書き出す。
-///
-/// - `reader` : 入力ソース（ファイル or stdin）
-/// - `writer` : 出力先（stdout）
-/// - `filter` : 行ごとのフィルタ関数。trueなら除去対象（invert=false時）
-/// - `invert` : 除去ではなく抽出モードに切り替える（=grep的な動作）
-/// - `report` : 処理件数などをstderrに出力するかどうか
+// Processes a text stream by applying a per-line filter function and writing matching lines to the output.
+//   `reader` – The input source (e.g., a file or standard input).
+//   `writer` – The output destination (e.g., standard output).
+//   `filter` – A function applied to each line. Returns `true` to include the line in the output (when `invert = false`).
+//   `invert` – If `true`, reverses the filter logic (i.e., switches to inclusion instead of exclusion; grep-like behavior).
+//   `report` – If `true`, suppresses output and prints processing statistics to standard error.
+//
+// Returns an error if reading from the input or writing to the output fails, or if the filter function itself returns an error.
 pub fn run_filter(
     mut reader: Box<dyn BufRead>,
     writer: &mut dyn Write,
@@ -28,7 +29,7 @@ pub fn run_filter(
         }
         total += 1;
 
-        // CRLF対応: \r\n を \n に変換
+        // Handle CRLF: convert \r\n to \n
         if buffer.ends_with(b"\r\n") {
             buffer.truncate(buffer.len() - 2);
             buffer.push(b'\n');

@@ -1,10 +1,10 @@
 use crate::core::ast::{AstNode, Pattern};
 use anyhow::{bail, Result};
 
-/// DSL文字列を構文解析して AST（抽象構文木）を構築する
+// Parses a DSL string and constructs an AST (Abstract Syntax Tree)
 pub fn parse_query(query: &str) -> Result<AstNode> {
     if query.trim().is_empty() {
-        bail!("クエリが空です");
+        bail!("Query is empty");
     }
 
     let mut parser = Parser::new(query);
@@ -12,7 +12,7 @@ pub fn parse_query(query: &str) -> Result<AstNode> {
 
     parser.consume_whitespace();
     if parser.peek().is_some() {
-        bail!("構文エラー（未解析のトークンあり）: pos={}", parser.pos);
+        bail!("Syntax error: unexpected trailing tokens at pos={}", parser.pos);
     }
 
     Ok(ast)
@@ -79,7 +79,7 @@ impl<'a> Parser<'a> {
         if self.consume_char('(') {
             let expr = self.parse_expr()?;
             if !self.consume_char(')') {
-                bail!("括弧の対応が取れていません: pos={}", self.pos);
+                bail!("Unmatched parenthesis: pos={}", self.pos);
             }
             Ok(expr)
         } else {
@@ -104,10 +104,10 @@ impl<'a> Parser<'a> {
         }
 
         if pattern.is_empty() {
-            bail!("空のパターンです: pos={}", self.pos);
+            bail!("Empty pattern: pos={}", self.pos);
         }
 
-        // 現在は Literal のみ（将来の拡張に備えてコメント残し）
+        // Currently only supports Literal (reserved for future extension)
         Ok(AstNode::Match(Pattern::Literal(pattern)))
     }
 
@@ -189,13 +189,13 @@ mod tests {
     #[test]
     fn test_empty_query() {
         let err = parse_query("   ").unwrap_err();
-        assert!(err.to_string().contains("クエリが空"));
+        assert!(err.to_string().contains("Query is empty"));
     }
 
     #[test]
     fn test_invalid_token() {
         let err = parse_query("foo & & bar").unwrap_err();
-        assert!(err.to_string().contains("空のパターン"));
+        assert!(err.to_string().contains("Empty pattern"));
     }
 
 
@@ -207,7 +207,7 @@ mod tests {
     fn test_operator_precedence() {
         let ast = parse_query("a & b | c").unwrap();
 
-        // AND が OR より優先される
+        // AND has higher precedence than OR
         match ast {
             AstNode::OrNode(lhs, rhs) => {
                 match *lhs {
@@ -215,11 +215,11 @@ mod tests {
                         assert_eq!(format!("{:?}", *ll), format!("{:?}", literal("a")));
                         assert_eq!(format!("{:?}", *lr), format!("{:?}", literal("b")));
                     }
-                    _ => panic!("左側が AndNode ではありません"),
+                    _ => panic!("Left-hand side is not an AndNode"),
                 }
                 assert_eq!(format!("{:?}", *rhs), format!("{:?}", literal("c")));
             }
-            _ => panic!("ORノードではありません"),
+            _ => panic!("Expected an OrNode at the top level"),
         }
     }
 
@@ -227,18 +227,18 @@ mod tests {
     fn test_not_has_highest_precedence() {
         let ast = parse_query("!a & b").unwrap();
 
-        // NOT が AND より優先される
+        // NOT has higher precedence than AND
         match ast {
             AstNode::AndNode(lhs, rhs) => {
                 match *lhs {
                     AstNode::NotNode(inner) => {
                         assert_eq!(format!("{:?}", *inner), format!("{:?}", literal("a")));
                     }
-                    _ => panic!("左側が NotNode ではありません"),
+                    _ => panic!("Left-hand side is not a NotNode"),
                 }
                 assert_eq!(format!("{:?}", *rhs), format!("{:?}", literal("b")));
             }
-            _ => panic!("ANDノードではありません"),
+            _ => panic!("Expected an AndNode at the top level"),
         }
     }
 
@@ -246,7 +246,7 @@ mod tests {
     fn test_parentheses_override_precedence() {
         let ast = parse_query("a & (b | c)").unwrap();
 
-        // 括弧により OR が先に評価される
+        // Parentheses override operator precedence, so OR is evaluated first
         match ast {
             AstNode::AndNode(lhs, rhs) => {
                 assert_eq!(format!("{:?}", *lhs), format!("{:?}", literal("a")));
@@ -256,10 +256,10 @@ mod tests {
                         assert_eq!(format!("{:?}", *rl), format!("{:?}", literal("b")));
                         assert_eq!(format!("{:?}", *rr), format!("{:?}", literal("c")));
                     }
-                    _ => panic!("右側が OrNode ではありません"),
+                    _ => panic!("Right-hand side is not an OrNode"),
                 }
             }
-            _ => panic!("ANDノードではありません"),
+            _ => panic!("Expected an AndNode at the top level"),
         }
     }
 }
