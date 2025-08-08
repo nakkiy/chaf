@@ -9,25 +9,30 @@ use crate::core::parser::parse_query;
 use crate::util::init_logging;
 use std::fs::File;
 use std::io::{self, BufReader};
+use tracing::{debug, info};
 
 fn main() {
     init_logging();
-    tracing::info!("chaf started");
+    info!("chaf started");
 
     let opts = parse_args();
+    debug!("line options: {:?}", opts);
 
     let ast = match parse_query(&opts.query) {
         Ok(ast) => ast,
         Err(e) => {
-            eprintln!("構文エラー: {e}");
+            eprintln!("Syntax error: {e}");
+            info!("chaf ended with error");
             std::process::exit(1);
         }
     };
+    debug!("Parsed AST: {:?}", ast);
 
     let filter = match build_filter(&ast, opts.invert) {
         Ok(filter) => filter,
         Err(e) => {
-            eprintln!("フィルタ構築エラー: {e}");
+            eprintln!("Filter build error: {e}");
+            info!("chaf ended with error");
             std::process::exit(1);
         }
     };
@@ -36,7 +41,8 @@ fn main() {
         Some(path) => match File::open(path) {
             Ok(file) => Box::new(BufReader::new(file)),
             Err(e) => {
-                eprintln!("ファイルオープンエラー: {e}");
+                eprintln!("Failed to open file: {e} at path: {}", path.display());
+                info!("chaf ended with error");
                 std::process::exit(1);
             }
         },
@@ -46,7 +52,9 @@ fn main() {
     let mut writer = io::stdout();
 
     if let Err(e) = engine::run_filter(reader, &mut writer, filter, opts.report) {
-        eprintln!("実行中エラー: {e}");
+        eprintln!("Runtime error: {e}");
+        info!("chaf ended with error");
         std::process::exit(1);
     }
+    info!("chaf ended successfully");
 }

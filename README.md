@@ -29,6 +29,9 @@ Such conditions are difficult to express clearly with `grep`.
 ## 🖥️ Example Usage
 
 ```bash
+## 🖥️ Example Usage
+
+```bash
 $ cat logs.txt
 error: failed to connect
 warn: deprecated API used
@@ -37,31 +40,31 @@ info: connection established
 warn: low disk space
 error: timeout while waiting for response
 
+# Lines containing "debug" or "warn" are excluded
 $ chaf 'debug | warn' logs.txt
 error: failed to connect
 info: connection established
 error: timeout while waiting for response
 
-# Lines containing "debug" or "warn" are excluded (not shown)
-
+# Excludes:
+# - Lines containing "debug"
+# - Lines containing "warn" unless they also contain "API"
 $ chaf 'debug | (warn & !API)' logs.txt
 error: failed to connect
 warn: deprecated API used
 info: connection established
 error: timeout while waiting for response
+# Explanation:
+# → "warn: low disk space" is excluded (no "API")
+# → "warn: deprecated API used" is kept (contains "API")
 
-# Excludes:
-# - Lines with "debug"
-# - Lines with "warn" but *not* "API"
-# → "warn: low disk space" is excluded
-# → "warn: deprecated API used" remains, since it contains "API"
-
+# Invert mode: show only lines that match the condition
+# Includes:
+# - Lines containing "debug"
+# - Lines containing "warn" unless they also contain "API"
 $ chaf --invert 'debug | (warn & !API)' logs.txt
 debug: retrying connection
 warn: low disk space
-
-# Displays only the lines that match the condition (= inverted exclusion)
-# → Includes "debug" lines and "warn" lines without "API"
 ```
 
 ---
