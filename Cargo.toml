@@ -3,7 +3,8 @@ name = "chaf"
 version = "0.1.0"
 edition = "2021"
 description = "A CLI filter tool that removes lines based on logical conditions using AND, OR, NOT, and parentheses."
-repository = "https://github.com/nakkiy/chakoshi"
+repository = "https://github.com/nakkiy/chaf"
+documentation = "https://github.com/nakkiy/chaf"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 keywords = ["filter", "cli", "log", "text", "dsl"]
@@ -12,6 +13,9 @@ categories = ["command-line-utilities", "text-processing"]
 [[bin]]
 name = "chaf"
 path = "src/main.rs"
+
+[lib]
+doctest = false
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
